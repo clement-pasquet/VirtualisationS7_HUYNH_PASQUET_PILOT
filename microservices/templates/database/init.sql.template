@@ -78,8 +78,8 @@ CREATE TRIGGER update_items_updated_at
 -- =============================================================================
 
 -- TODO: Configurer les permissions si nécessaire
--- GRANT SELECT, INSERT, UPDATE, DELETE ON items TO your_project_user;
--- GRANT USAGE, SELECT ON SEQUENCE items_id_seq TO your_project_user;
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON items TO final_project_user;
+-- GRANT USAGE, SELECT ON SEQUENCE items_id_seq TO final_project_user;
 
 -- =============================================================================
 -- 📝 COMMENTAIRES ET DOCUMENTATION
