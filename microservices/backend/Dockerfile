@@ -1,67 +1,58 @@
 # =============================================================================
-# 🐍 Dockerfile Backend Template - Python/FastAPI
+# 🐍 Dockerfile Backend - Python/FastAPI
 # =============================================================================
 
-# TODO: Choisir votre version Python (3.11+ recommandé)
 FROM python:3.11-alpine
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
+# Install curl for healthcheck and creating a non-root user
+RUN apk add --no-cache curl && \
+    adduser -D -u 1000 appuser
 
-# Métadonnées
-LABEL maintainer="votre-nom@esiea.fr"
-LABEL description="Backend API pour projet microservices ESIEA"
+# Metadata
+LABEL maintainer="pasquet@et.esiea.fr"
+LABEL description="Backend API for Final Microservices Project"
 
-# Répertoire de travail
+# Set working directory
 WORKDIR /app
 
 # =============================================================================
-# 📦 INSTALLATION DES DÉPENDANCES
+# 📦 DEPENDENCIES
 # =============================================================================
 
-# Copier le fichier requirements.txt en premier (optimisation du cache Docker)
 COPY requirements.txt .
 
-# Installer les dépendances Python
-# TODO: Adapter selon vos besoins (ajoutez des packages système si nécessaire)
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # =============================================================================
-# 📁 COPIE DU CODE SOURCE
+# 📁 SOURCE CODE
 # =============================================================================
 
-# Copier tout le code source
 COPY . .
+
+# Change ownership to non-root user
+RUN chown -R appuser:appuser /app
 
 # =============================================================================
 # 🔧 CONFIGURATION
 # =============================================================================
 
-# Port d'écoute (doit correspondre à votre application)
 EXPOSE 8000
 
-# Variables d'environnement par défaut
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
 # =============================================================================
-# 🏥 HEALTH CHECK OBLIGATOIRE
+# 🏥 HEALTH CHECK
 # =============================================================================
-# TODO: Adapter l'endpoint selon votre API (/health obligatoire)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # =============================================================================
-# 🚀 COMMANDE DE DÉMARRAGE
+# 🚀 START
 # =============================================================================
 
-# TODO: Adapter selon votre framework
-# Pour FastAPI :
+# Switch to non-root user
+USER appuser
+
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-# Pour Flask :
-# CMD ["python", "app.py"]
-
-# Pour Gunicorn + FastAPI :
-# CMD ["gunicorn", "main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
