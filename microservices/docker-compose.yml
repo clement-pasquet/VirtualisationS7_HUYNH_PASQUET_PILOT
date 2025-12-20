@@ -1,12 +1,8 @@
 # ========================================
 # 🐳 Docker Compose Template
 # Projet Microservices - ESIEA
-#
-# Template pour le projet final d'application microservices
-# À adapter selon vos besoins spécifiques
 # ========================================
 
-# Nom du projet (à personnaliser)
 name: final-project
 
 services:
@@ -17,18 +13,16 @@ services:
   db:
     build: ./database
 
-    # TODO: Configurer vos variables d'environnement
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_DB: ${DB_NAME}
-      # Utilisation des secrets Docker (bonne pratique)
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
 
     # Volume pour persistance des données
     volumes:
       - db_data:/var/lib/postgresql/data
 
-    # Secrets Docker pour sécurité
+    # Secrets Docker (a faire)
     secrets:
       - db_password
 
@@ -48,26 +42,21 @@ services:
   # 🖥️ SERVICE BACKEND (API)
   # ========================================
   backend:
-    # TODO: Créer votre Dockerfile backend
     build: ./backend
 
-    # TODO: Configurer vos variables d'environnement
     environment:
       DB_HOST: db
       DB_USER: ${DB_USER}
       DB_NAME: ${DB_NAME}
       DB_PASSWORD_FILE: /run/secrets/db_password
 
-    # Port du backend (à adapter)
     ports:
       - "${BACKEND_PORT:-8000}:8000"
 
-    # Attendre que la DB soit healthy
     depends_on:
       db:
         condition: service_healthy
 
-    # Secrets Docker
     secrets:
       - db_password
 
@@ -87,7 +76,6 @@ services:
   # 🎨 SERVICE FRONTEND
   # ========================================
   frontend:
-    # TODO: Créer votre Dockerfile frontend
     build:
       context: ./frontend
       args:
