@@ -7,7 +7,7 @@
 # ========================================
 
 # Nom du projet (à personnaliser)
-name: your-project-name
+name: final-project
 
 services:
 
@@ -15,8 +15,7 @@ services:
   # 🗃️ SERVICE BASE DE DONNÉES
   # ========================================
   db:
-    # TODO: Choisir votre base de données (PostgreSQL, MySQL, MongoDB)
-    image: postgres:16-alpine
+    build: ./database
 
     # TODO: Configurer vos variables d'environnement
     environment:
@@ -89,15 +88,14 @@ services:
   # ========================================
   frontend:
     # TODO: Créer votre Dockerfile frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
 
     # Port du frontend
     ports:
       - "${FRONTEND_PORT:-3000}:80"
-
-    # TODO: Configurer l'URL de votre API
-    environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
 
     # Attendre que le backend soit healthy
     depends_on:
@@ -106,7 +104,7 @@ services:
 
     # Health check obligatoire - endpoint /health requis
     healthcheck:
-      test: [ "CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost/ || exit 1" ]
+      test: [ "CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3

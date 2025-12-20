@@ -17,7 +17,7 @@ from typing import List, Optional
 # =============================================================================
 
 app = FastAPI(
-    title="Todo Microservices API",
+    title="Project Final Microservices API",
     description="API REST pour le projet final ESIEA",
     version="1.0.0"
 )
@@ -87,34 +87,7 @@ def get_db_connection():
     
     raise Exception("Impossible de se connecter à la base de données")
 
-def init_db():
-    """
-    Initialise la table tasks si elle n'existe pas
-    """
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS tasks (
-                id SERIAL PRIMARY KEY,
-                title VARCHAR(100) NOT NULL,
-                description TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Base de données initialisée avec succès")
-    except Exception as e:
-        print(f"Erreur lors de l'initialisation de la DB: {e}")
 
-# Initialisation au démarrage
-@app.on_event("startup")
-async def startup_event():
-    # Attendre un peu que la DB soit prête
-    time.sleep(2) 
-    init_db()
 
 # =============================================================================
 # 🏥 HEALTH CHECK
