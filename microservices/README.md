@@ -1,85 +1,132 @@
-# Final Project: Microservices Application
+# Projet Final : Application Microservices
 
-A fully containerized Microservices application built for the Virtualization & Containerization course at ESIEA.
+Une application microservices entièrement conteneurisée, développée pour le cours de Virtualisation & Conteneurisation à l'ESIEA.
 
 ## Architecture
 
-This project consists of 3 orchestrated services:
+Ce projet se compose de 3 services orchestrés :
 
-1.  **Backend (API)**: Python FastAPI application serving REST endpoints.
-2.  **Frontend (UI)**: React Application (Vite) served via Nginx.
-3.  **Database**: PostgreSQL 16 (Alpine).
+1.  **Backend (API)** : Application Python FastAPI servant des endpoints REST.
+2.  **Frontend (UI)** : Application React (Vite) servie via Nginx.
+3.  **Base de données** : PostgreSQL 16 (Alpine).
 
-## Tech Stack
+## Stack Technique
 
-*   **Docker & Docker Compose**: Containerization and Orchestration.
-*   **Python 3.11 & FastAPI**: High-performance backend API.
-*   **React & Vite**: Modern frontend development.
-*   **PostgreSQL**: Robust relational database.
-*   **Nginx**: Production-grade web server / reverse proxy.
+*   **Docker & Docker Compose** : Conteneurisation et Orchestration.
+*   **Python 3.11 & FastAPI** : API backend performante.
+*   **React & Vite** : Développement frontend moderne.
+*   **PostgreSQL** : Base de données relationnelle robuste.
+*   **Nginx** : Serveur web / reverse proxy de production.
 
-## Starting
+## Démarrage
 
-### Prerequisites
+### Pré-requis
 
-*   Docker Desktop installed and running.
+*   Docker Desktop installé et en cours d'exécution.
 *   Git.
 
-### Installation & Run
+### Installation & Lancement
 
-1.  **Clone the repository:**
+1.  **Cloner le dépôt :**
     ```bash
-    git clone <your-repo-url>
+    git clone <votre-url-repo>
     cd microservices
     ```
 
-2.  **Start the application:**
+2.  **Démarrer l'application :**
     ```bash
     docker compose up --build -d
     ```
 
-3.  **Verify status:**
+3.  **Vérifier le statut :**
     ```bash
     docker compose ps
     ```
-    *All services should report `(healthy)`.*
+    *Tous les services doivent indiquer `(healthy)`.*
 
-### Accessing the Application
+### Accéder à l'Application
 
 | Service | URL | Description |
 | :--- | :--- | :--- |
-| **Frontend** | [http://localhost:3000](http://localhost:3000) | Main User Interface |
-| **Backend API** | [http://localhost:8000](http://localhost:8000) | JSON REST API |
-| **API Docs** | [http://localhost:8000/docs](http://localhost:8000/docs) | Interactive Swagger UI |
-| **Health Check** | [http://localhost:8000/health](http://localhost:8000/health) | API Status |
+| **Frontend** | [http://localhost:3000](http://localhost:3000) | Interface Utilisateur Principale |
+| **Backend API** | [http://localhost:8000](http://localhost:8000) | API REST JSON |
+| **API Docs** | [http://localhost:8000/docs](http://localhost:8000/docs) | Swagger UI Interactif |
+| **Health Check** | [http://localhost:8000/health](http://localhost:8000/health) | Statut de l'API |
+
+## Endpoints API
+
+| Méthode | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/tasks` | Récupérer toutes les tâches |
+| `POST` | `/tasks` | Créer une nouvelle tâche (body JSON requis) |
+| `DELETE` | `/tasks/{id}` | Supprimer une tâche par ID |
+| `GET` | `/health` | Vérifier le statut de santé de l'API |
+
+## Captures d'écran
+
+![5.png](..\assets\5.png)
+> *Interface principale montrant la liste des tâches et le formulaire d'ajout.*
+
+## Dépannage
+
+**Problèmes Courants :**
+
+1.  **Échec de connexion à la Base de données :**
+    *   Assurez-vous que le service `db` est healthy : `docker compose ps`
+    *   Vérifiez les logs : `docker compose logs db`
+    *   Vérifiez les secrets : Assurez-vous que `secrets/db_password` existe.
+
+2.  **Erreur de communication Frontend/Backend :**
+    *   Vérifiez la console du navigateur (F12) pour les erreurs réseau.
+    *   Assurez-vous que `VITE_API_URL` est correct (doit être `http://localhost:8000`).
+    *   Vérifiez que le CORS est activé (logs Backend).
+
+## Exemples
+
+**Tester l'API avec Curl :**
+
+```bash
+# 1. Vérifier la santé (Health Check)
+curl http://localhost:8000/health
+
+# 2. Créer une Tâche
+curl -X POST "http://localhost:8000/tasks" \
+     -H "Content-Type: application/json" \
+     -d '{"title": "Tâche Test", "description": "Créé via Curl"}'
+
+# 3. Lister les Tâches
+curl http://localhost:8000/tasks
+```
 
 ## Configuration
 
-### Environment Variables (`.env`)
+### Variables d'Environnement (`.env`)
 
-The application is pre-configured for development. Key variables:
+L'application est pré-configurée pour le développement. Variables clés :
 
-*   **DB Credentials**: `DB_USER`, `DB_NAME` (managed via `.env`).
-*   **Security**: Database password is managed via **Docker Secrets** (`secrets/db_password`).
-*   **Networking**: Frontend connects to Backend via `VITE_API_URL` (injected at build time).
+*   **Identifiants DB** : `DB_USER`, `DB_NAME` (géré via `.env`).
+*   **Sécurité** : Le mot de passe de la base de données est géré via **Docker Secrets** (`secrets/db_password`).
+*   **Réseau** : Le Frontend se connecte au Backend via `VITE_API_URL` (injecté au moment du build).
 
-### Docker Network
+### Réseau Docker
 
-All services communicate over a custom bridge network `app_network`. 
-*   internal dns: `backend`, `db`, `frontend`.
+Tous les services communiquent sur un réseau bridge personnalisé `app_network`.
+*   DNS internes : `backend`, `db`, `frontend`.
 
-## Features Implemented
+## Fonctionnalités Implémentées
 
-*   [x] **Full Containerization**: Custom Dockerfiles for all services.
-*   [x] **Orchestration**: `docker-compose.yml` with dependency management.
-*   [x] **Security**: 
-    *   Backend runs as non-root user.
-    *   Docker Secrets for password management.
-*   [x] **Health Checks**: Implemented for all 3 services.
-*   [x] **Optimization**: Multi-stage builds for Frontend and Backend.
-*   [x] **Persistence**: Docker Volumes for Database stability.
+*   [x] **Conteneurisation Complète** : Dockerfiles personnalisés pour tous les services.
+*   [x] **Orchestration** : `docker-compose.yml` avec gestion des dépendances.
+*   [x] **Sécurité** :
+    *   Backend exécuté en tant qu'utilisateur non-root.
+    *   Docker Secrets pour la gestion des mots de passe.
+*   [x] **Health Checks** : Implémentés pour les 3 services.
+*   [x] **Optimisation** : Multi-stage builds pour le Frontend et le Backend.
+*   [x] **Persistance** : Volumes Docker pour la stabilité de la base de données.
 
-## Authors
+Total : 65/65 items validés
+
+## Auteurs
 
 *   **HUYNH**
 *   **PASQUET**
