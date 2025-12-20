@@ -143,9 +143,9 @@ Total : 65/65 items validés
 
 ## Auteurs
 
-*   **HUYNH**
-*   **PASQUET**
-*   **PILOT**
+*   **Alexandre HUYNH**
+*   **Clément PASQUET**
+*   **Alexandre PILOT**
 
 ---
 *ESIEA - Virtualisation S7 - 2025*
