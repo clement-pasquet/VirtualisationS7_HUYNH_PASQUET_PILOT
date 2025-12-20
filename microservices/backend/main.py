@@ -74,8 +74,8 @@ def get_db_connection():
 
             conn = psycopg2.connect(
                 host=os.getenv("DB_HOST", "db"),
-                database=os.getenv("DB_NAME", "final_project_db"),
-                user=os.getenv("DB_USER", "final_project_user"),
+                database=os.getenv("DB_NAME", "your_project_db"),
+                user=os.getenv("DB_USER", "your_project_user"),
                 password=password,
                 port=os.getenv("DB_PORT", "5432")
             )

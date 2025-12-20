@@ -1,0 +1,4 @@
+node_modules/
+microservices/frontend/node_modules/
+microservices/frontend/final_site/node_modules/
+.env

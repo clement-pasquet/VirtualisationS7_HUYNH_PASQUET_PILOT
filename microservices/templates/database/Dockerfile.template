@@ -15,8 +15,8 @@ LABEL description="Base de données pour projet microservices ESIEA"
 # =============================================================================
 
 # Variables d'environnement par défaut (surchargées par docker-compose)
-ENV POSTGRES_DB=final_project_db
-ENV POSTGRES_USER=final_project_user
+ENV POSTGRES_DB=your_project_db
+ENV POSTGRES_USER=your_project_user
 ENV POSTGRES_INITDB_ARGS="--encoding=UTF-8 --locale=C --data-checksums"
 
 # =============================================================================
@@ -72,8 +72,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 #
 # Alternative pour MySQL:
 # FROM mysql:8.0
-# ENV MYSQL_DATABASE=final_project_db
-# ENV MYSQL_USER=final_project_user
+# ENV MYSQL_DATABASE=your_project_db
+# ENV MYSQL_USER=your_project_user
 # COPY init.sql /docker-entrypoint-initdb.d/
 # HEALTHCHECK CMD mysqladmin ping -h localhost || exit 1
 #
