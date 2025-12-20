@@ -63,14 +63,14 @@ def get_db_connection():
     retries = 5
     while retries > 0:
         try:
-            # Récupération du mot de passe depuis le secret Docker
-            password = None
+            # Récupération du chemin du secret via variable d'environnement (Conforme INDICATIONS.md)
+            secret_path = os.getenv("DB_PASSWORD_FILE", "/run/secrets/db_password")
+            
             try:
-                with open("/run/secrets/db_password", "r") as f:
+                with open(secret_path, "r") as f:
                     password = f.read().strip()
             except FileNotFoundError:
-                # Fallback pour le développement local sans secrets (non recommandé en prod)
-                password = os.getenv("DB_PASSWORD", "YourSecurePassword123!")
+                raise Exception(f"Secret DB non trouvé à : {secret_path}")
 
             conn = psycopg2.connect(
                 host=os.getenv("DB_HOST", "db"),

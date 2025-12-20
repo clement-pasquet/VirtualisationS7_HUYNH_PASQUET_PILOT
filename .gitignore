@@ -5,4 +5,7 @@ microservices/frontend/final_site/node_modules/
 .vscode
 __pycache__/
 *.pyc
-secrets/db_password
+
+# Gestion des secrets : on ne le met PAS dans le git, uniquement l'exemple
+secrets/*
+!secrets/*.example
