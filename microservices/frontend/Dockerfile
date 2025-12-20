@@ -1,59 +1,56 @@
 # =============================================================================
-# ⚛️ Dockerfile Frontend Template - React/Vite
-# Build multi-étapes pour optimiser la taille finale
+# ⚛️ Dockerfile Frontend - React/Vite
+# Multi-stage build for size optimization
 # =============================================================================
 
 # =============================================================================
-# 🏗️ ÉTAPE 1: BUILD (Compilation React)
+# 🏗️ STAGE 1: BUILD
 # =============================================================================
 
 FROM node:22-alpine AS build
 
-# Métadonnées
-LABEL maintainer="votre-nom@esiea.fr"
-LABEL description="Frontend React pour projet microservices ESIEA"
+# Metadata
+LABEL maintainer="pasquet@et.esiea.fr"
+LABEL description="Frontend React for Final Microservices Project"
 
-# Répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances (optimisation cache Docker)
+# Install dependencies (cache optimized)
 COPY package*.json ./
-
-# Installer les dépendances
-# Utilisation de npm install pour générer les binaires natifs corrects pour Linux
 RUN npm install
 
-# Copier le code source
+# Copy source code and build
 COPY . .
 
-# TODO: Configurer l'URL de l'API au build time
+# Build-time environment variable injection
 ARG VITE_API_URL=http://localhost:8000
 ENV VITE_API_URL=$VITE_API_URL
 
-# Build de production
 RUN npm run build
 
 # =============================================================================
-# 🌐 ÉTAPE 2: PRODUCTION (Serveur nginx)
+# 🌐 STAGE 2: PRODUCTION (Nginx)
 # =============================================================================
 
 FROM nginx:alpine
 
-# Copier les fichiers buildés depuis l'étape précédente
+# Security: Run as non-root user (nginx image supports this out of the box with some tweaks,
+# but for simplicity/standard alpine nginx usage we keep default user but fix permissions if needed.
+# However, standard nginx image on 80 requires root. To be fully non-root we'd need to use >1024 port.
+# For this student project level, correctly copying config and cleaning up is the priority.)
+
+# Copy built assets
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Config Nginx personnalisée
+# Copy custom configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Port d'exposition
 EXPOSE 80
 
 # =============================================================================
-# 🏥 HEALTH CHECK OBLIGATOIRE
+# 🏥 HEALTH CHECK
 # =============================================================================
-# TODO: Créer un endpoint /health dans votre app React ou nginx
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost/health || exit 1
 
-# Démarrage automatique de nginx
 CMD ["nginx", "-g", "daemon off;"]
