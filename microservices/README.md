@@ -33,12 +33,27 @@ Ce projet se compose de 3 services orchestrés :
     cd microservices
     ```
 
-2.  **Démarrer l'application :**
+2.  **Configurer le secret de la base de données :**
+    ```bash
+    # Créer le fichier secret à partir de l'exemple
+    cp secrets/db_password.example secrets/db_password
+    
+    # Modifier le mot de passe (OBLIGATOIRE pour la sécurité)
+    # Windows PowerShell:
+    notepad secrets/db_password
+    
+    # Linux/Mac:
+    nano secrets/db_password
+    ```
+    
+    **⚠️ Important** : Le fichier `secrets/db_password` contient le mot de passe réel et ne doit **jamais** être commité dans Git. Il est déjà exclu via `.gitignore`.
+
+3.  **Démarrer l'application :**
     ```bash
     docker compose up --build -d
     ```
 
-3.  **Vérifier le statut :**
+4.  **Vérifier le statut :**
     ```bash
     docker compose ps
     ```
@@ -64,7 +79,7 @@ Ce projet se compose de 3 services orchestrés :
 
 ## Captures d'écran
 
-![5.png](..\assets\5.png)
+![5.png](../assets/5.png)
 > *Interface principale montrant la liste des tâches et le formulaire d'ajout.*
 
 ## Dépannage
